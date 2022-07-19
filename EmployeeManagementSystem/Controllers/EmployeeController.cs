@@ -82,5 +82,28 @@ namespace EmployeeManagementSystem.Controllers
                 throw ex;
             }
         }
+
+      //  [Authorize(Roles =Role.Admin)]
+        [HttpGet("GetAllEmployee")]
+        public IActionResult GetAllEmployee()
+        {
+            try
+            {
+                var result=this.employeeBL.GetAllEmployee();
+                if (result != null)
+                {
+                    return this.Ok(new { Success = true, message = "Employee Details Fatched Successfully", Response = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "Oops!! Details Not Fatched" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return this.BadRequest(new {Success=false, message = ex.Message});
+            }
+        }
     }
 }
