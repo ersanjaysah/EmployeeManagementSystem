@@ -23,11 +23,11 @@ Create procedure SPEmpRegistration
 @FullName varchar(255),
 @Email varchar(255),
 @Password Varchar(255),
-@MobileNumber Bigint,
+@MobileNumber bigint,
 @Address Varchar(225),
 @Gender Varchar(225),
 @Position Varchar(225),
-@Salary Bigint
+@Salary bigint
 )
 as
 Begin
@@ -35,14 +35,39 @@ Begin
 		values (@FullName, @Email, @Password, @MobileNumber, @Address, @Gender, @Position, @Salary) 
 end;
 
----this SP is for login
-create procedure SPEmpLogin
+--procedure to updateEmployee
+create procedure SPUpdateEmployee
 (
+@EmpId int,
+@FullName varchar(255),
 @Email varchar(255),
-@Password varchar(255)
+@Password Varchar(255),
+@MobileNumber Bigint,
+@Address Varchar(225),
+@Gender Varchar(225),
+@Position Varchar(225),
+@Salary Bigint
 )
 as
-begin
-select * from Employee
-where Email = @Email and Password = @Password
+BEGIN
+Update Employee set FullName = @FullName, 
+Email = @Email,
+Password = @Password,
+MobileNumber = @MobileNumber,
+Address= @Address,
+Gender = @Gender,
+Position = @Position,
+Salary = @Salary
+where EmpId = @EmpId;
+End;
+
+---Procedure to deleteEmployee
+create procedure SPDeleteEmployee
+(
+@EmpId int
+)
+as
+BEGIN
+Delete Employee 
+where EmpId = @EmpId;
 End;

@@ -140,5 +140,39 @@ namespace ReposatoryLayer.Service
             }
 
         }
+
+        public bool DeleteEmployee(int EmpId)
+        {
+            try
+            {
+                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+                SqlCommand cmd = new SqlCommand("SPDeleteEmployee", this.sqlConnection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                //adding parameter to store procedure
+                cmd.Parameters.AddWithValue("@EmpId", EmpId);
+                this.sqlConnection.Open();
+                var result = cmd.ExecuteNonQuery();
+                this.sqlConnection.Close();
+                if (result != 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                this.sqlConnection.Close();
+            }
+        }
     }
 }

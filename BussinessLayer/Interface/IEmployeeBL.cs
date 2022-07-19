@@ -8,7 +8,8 @@ namespace BussinessLayer.Interface
     public interface IEmployeeBL
     {
         public EmpRegistration Registration(EmpRegistration empRegistration);
-       public bool UpdateEmployee(int EmpId, EmpRegistration updateEmployee);
+        public bool UpdateEmployee(int EmpId, EmpRegistration updateEmployee);
+        public bool DeleteEmployee(int EmpId);
 
     }
 }

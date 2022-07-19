@@ -51,11 +51,35 @@ namespace EmployeeManagementSystem.Controllers
                 {
                     return this.Ok(new { Success = true, message = "Employee Updated successfully", Response = Data });
                 }
-                else { return this.BadRequest(new { Success = false, message = "Enter Valid Employee" }); }
+                else { return this.BadRequest(new { Success = false, message = "Enter Valid Employee Id" }); }
             }
             catch (Exception ex)
             {
                 return this.BadRequest(new { Success = false, message = ex.Message });
+            }
+        }
+
+        // [Authorize(Roles = Role.Admin)]
+        [HttpDelete("DeleteEmployee/{EmpId}")]
+        public IActionResult DeleteEmployee(int EmpId)
+        {
+            try
+            {
+                var Data = this.employeeBL.DeleteEmployee(EmpId);
+                if (Data == true)
+                {
+                    return this.Ok(new { Success = true, message = "Employee Deleted Successfully", Response = Data });
+
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "Enter valid EmployeeId" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
             }
         }
     }
