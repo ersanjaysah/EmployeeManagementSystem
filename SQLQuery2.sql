@@ -71,3 +71,10 @@ BEGIN
 Delete Employee 
 where EmpId = @EmpId;
 End;
+
+---procedure to get all books
+create procedure SPGetAllEmployee
+as
+BEGIN
+	select * from Employee;
+End;
