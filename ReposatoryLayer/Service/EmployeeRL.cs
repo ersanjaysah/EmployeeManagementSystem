@@ -15,12 +15,12 @@ namespace ReposatoryLayer.Service
     public class EmployeeRL : IEmployeeRL
     {
         private SqlConnection sqlConnection;
-        private readonly IConfiguration configuration;
+      
+        private IConfiguration Configuration { get; }
         public EmployeeRL(IConfiguration configuration)
         {
             this.Configuration = configuration;
         }
-        private IConfiguration Configuration { get; }
 
         /// <summary>
         /// This method is used for Register the Employee details by admin
@@ -239,11 +239,11 @@ namespace ReposatoryLayer.Service
                 this.sqlConnection.Open();
 
                 SqlDataReader reader = cmd.ExecuteReader();
-                // for checking datareader has row or not
+                    EmpLogin emp = new EmpLogin();
+               
                 if (reader.HasRows)
                 {
                     int EmpId = 0;
-                    EmpLogin emp = new EmpLogin();
 
                     while (reader.Read())
                     {
@@ -253,7 +253,7 @@ namespace ReposatoryLayer.Service
                     }
                     // closing the connection
                     this.sqlConnection.Close();
-                    var Token = this.GenerateJWTToken(emp.Email, EmpId);
+                    var Token = this.GenerateSecurityToken(emp.Email, EmpId);
                     return Token;
                 }
                 else
@@ -273,6 +273,28 @@ namespace ReposatoryLayer.Service
                 this.sqlConnection.Close();
             }
         }
+
+        public string GenerateSecurityToken(string emailID, int userId)
+        {
+            var SecurityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN"));
+            var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Role,"Employee"),
+                new Claim(ClaimTypes.Email, emailID),
+                new Claim("UserId", userId.ToString())
+            };
+            var token = new JwtSecurityToken(
+                this.Configuration["Jwt:Issuer"],
+                this.Configuration["Jwt:Audience"],
+                claims,
+                expires: DateTime.Now.AddHours(24),
+                signingCredentials: credentials
+                );
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
 
         public EmpRegistration EmployeeDetails(int EmpId)
         {

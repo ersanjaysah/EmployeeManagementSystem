@@ -49,7 +49,7 @@ namespace ReposatoryLayer.Service
 
                     }
                     this.sqlConnection.Close();
-                    admin.Token = this.GetJWTToken(admin);
+                    admin.Token = this.GenerateSecurityToken(admin.Email, admin.AdminId);
                     return admin;
                 }
                 else
@@ -63,26 +63,27 @@ namespace ReposatoryLayer.Service
                 throw ex;
             }
         }
-        private string GetJWTToken(AdminLoginModel admin)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenKey = Encoding.ASCII.GetBytes("This is My Key To Generate Token");
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Role, "Admin"),
-                    new Claim("Email", admin.Email),
-                    new Claim("AdminId", admin.AdminId.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddHours(2),
+       
 
-                SigningCredentials = new SigningCredentials(
-               new SymmetricSecurityKey(tokenKey),
-                SecurityAlgorithms.HmacSha256Signature)
+        public string GenerateSecurityToken(string emailID, int AdminId)
+        {
+            var SecurityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN"));
+            var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Role,"Admin"),
+                new Claim(ClaimTypes.Email, emailID),
+                new Claim("AdminId", AdminId.ToString())
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var token = new JwtSecurityToken(
+                this.Configuration["Jwt:Issuer"],
+                this.Configuration["Jwt:Audience"],
+                claims,
+                expires: DateTime.Now.AddHours(24),
+                signingCredentials: credentials
+                );
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
 
