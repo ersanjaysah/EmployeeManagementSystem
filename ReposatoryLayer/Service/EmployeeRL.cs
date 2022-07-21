@@ -273,5 +273,42 @@ namespace ReposatoryLayer.Service
                 this.sqlConnection.Close();
             }
         }
+
+        public EmpRegistration EmployeeDetails(int EmpId)
+        {
+            try
+            {
+                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+                SqlCommand cmd = new SqlCommand("SPGetEmployeeByEmpId", this.sqlConnection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                cmd.Parameters.AddWithValue("@EmpId", EmpId);
+                this.sqlConnection.Open();
+                EmpRegistration empRegistration = new EmpRegistration();
+                SqlDataReader reader = cmd.ExecuteReader();
+                reader.Read();
+                empRegistration.EmpId = Convert.ToInt32(reader["EmpId"]);
+                empRegistration.FullName = reader["FullName"].ToString();
+                empRegistration.Email = reader["Email"].ToString();
+                empRegistration.Password = reader["Password"].ToString();
+                empRegistration.MobileNumber = Convert.ToInt64(reader["MobileNumber"]);
+                empRegistration.Address = reader["Address"].ToString();
+                empRegistration.Gender = reader["Gender"].ToString();
+                empRegistration.Position = reader["Position"].ToString();
+                empRegistration.Salary = Convert.ToInt64(reader["Salary"]);
+
+                return empRegistration;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                this.sqlConnection.Close();
+            }
+        }
     }
 }

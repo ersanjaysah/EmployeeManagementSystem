@@ -83,5 +83,18 @@ namespace BussinessLayer.Service
                 throw ex;
             }
         }
+
+        public EmpRegistration EmployeeDetails(int EmpId)
+        {
+            try
+            {
+                return this.employeeRL.EmployeeDetails(EmpId);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }

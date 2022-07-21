@@ -3,6 +3,7 @@ using DatabaseLayer.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace EmployeeManagementSystem.Controllers
 {
@@ -106,7 +107,8 @@ namespace EmployeeManagementSystem.Controllers
             }
         }
 
-        
+       
+
         [HttpPost("EmployeeLogin")] 
         public IActionResult EmployeeLogin(EmpLogin empLogin)
         {
@@ -130,5 +132,28 @@ namespace EmployeeManagementSystem.Controllers
         }
 
 
+        [Authorize(Roles = Role.User)]
+        [HttpGet("EmployeeDetails")]
+        public IActionResult EmployeeDetails()
+        {
+            try
+            {
+                int EmpId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "EmpId").Value);
+                var result = this.employeeBL.EmployeeDetails(EmpId);
+                if (result != null)
+                {
+                    return this.Ok(new { Success = true, message = "Here is the Details", Response = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "please Enter valid credentials" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return this.BadRequest(new { success = false, message = ex.Message });
+            }
+        }
     }
 }
