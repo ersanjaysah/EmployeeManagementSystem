@@ -12,5 +12,6 @@ namespace ReposatoryLayer.Interface
         public bool DeleteEmployee(int EmpId);
         public List<EmpRegistration> GetAllEmployee();
         public string EmployeeLogin(EmpLogin empLogin);
+        public EmpRegistration EmployeeDetails(int EmpId);
     }
 }

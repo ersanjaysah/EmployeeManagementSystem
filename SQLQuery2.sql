@@ -78,3 +78,15 @@ as
 BEGIN
 	select * from Employee;
 End;
+
+
+--------------------------procedure for get employee------------
+create procedure SPGetEmployeeByEmpId
+(
+@EmpId int
+)
+as
+BEGIN
+select * from Employee
+where EmpId = @EmpId;
+End;
