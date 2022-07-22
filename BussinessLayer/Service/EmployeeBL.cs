@@ -16,7 +16,9 @@ namespace BussinessLayer.Service
             this.employeeRL = employeeRL;
         }
 
-       public EmpRegistration Registration(EmpRegistration empRegistration)
+       
+
+        public EmpRegistration Registration(EmpRegistration empRegistration)
         {
             try
             {
@@ -35,6 +37,19 @@ namespace BussinessLayer.Service
             try
             {
                 return this.employeeRL.UpdateEmployee(EmpId, updateEmployee);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public bool DeleteEmployee(int EmpId)
+        {
+            try
+            {
+                return this.employeeRL.DeleteEmployee(EmpId);
             }
             catch (Exception ex)
             {
