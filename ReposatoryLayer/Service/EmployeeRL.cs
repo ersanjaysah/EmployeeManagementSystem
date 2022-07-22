@@ -223,5 +223,55 @@ namespace ReposatoryLayer.Service
                 this.sqlConnection.Close();
             }
         }
+
+        public string EmployeeLogin(EmpLogin empLogin)
+        {
+            try
+            {
+                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+                SqlCommand cmd = new SqlCommand("SPLoginEmployee", this.sqlConnection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                cmd.Parameters.AddWithValue("@Email", empLogin.Email);
+                cmd.Parameters.AddWithValue("@Password", empLogin.Password);
+                // opening the connection
+                this.sqlConnection.Open();
+
+                SqlDataReader reader = cmd.ExecuteReader();
+                // for checking datareader has row or not
+                if (reader.HasRows)
+                {
+                    int EmpId = 0;
+                    EmpLogin emp = new EmpLogin();
+
+                    while (reader.Read())
+                    {
+                        emp.Email = Convert.ToString(reader["Email"]);
+                        emp.Password = Convert.ToString(reader["Password"]);
+                        EmpId = Convert.ToInt32(reader["EmpId"]);
+                    }
+                    // closing the connection
+                    this.sqlConnection.Close();
+                    var Token = this.GenerateJWTToken(emp.Email, EmpId);
+                    return Token;
+                }
+                else
+                {
+                    this.sqlConnection.Close();
+                    return null;
+                }
+  
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                this.sqlConnection.Close();
+            }
+        }
     }
 }

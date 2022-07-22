@@ -1,5 +1,6 @@
 ﻿using BussinessLayer.Interface;
 using DatabaseLayer.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -12,11 +13,13 @@ namespace EmployeeManagementSystem.Controllers
 
         private readonly IAdminBL adminBL;
 
+
         public AdminController(IAdminBL adminBL)
         {
             this.adminBL = adminBL;
         }
 
+        [AllowAnonymous]
         [HttpPost("AdminLogin")]
         public IActionResult AdminLogin(AdminLogin adminLogin)
         {

@@ -17,7 +17,7 @@ namespace EmployeeManagementSystem.Controllers
         }  
 
 
-        // [Authorize(Roles = Role.Admin)]
+         [Authorize(Roles = Role.Admin)]
         [HttpPost("Registration")]//HttpPost used to send the data to the server from HttpClient
         public IActionResult Registration(EmpRegistration empRegistration)
         {
@@ -105,5 +105,30 @@ namespace EmployeeManagementSystem.Controllers
                 return this.BadRequest(new {Success=false, message = ex.Message});
             }
         }
+
+        
+        [HttpPost("EmployeeLogin")] 
+        public IActionResult EmployeeLogin(EmpLogin empLogin)
+        {
+            try
+            {
+                var result = this.employeeBL.EmployeeLogin(empLogin);
+                if (result!=null)
+                {
+                    return this.Ok(new { success = true, message = "Login Successful", Token = result });
+                }
+                else
+                {
+                    return this.BadRequest(new { success = false, message = "Sorry!!! Login Failed", Token = result });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
     }
 }

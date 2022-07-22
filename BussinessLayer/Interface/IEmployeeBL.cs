@@ -11,6 +11,7 @@ namespace BussinessLayer.Interface
         public bool UpdateEmployee(int EmpId, EmpRegistration updateEmployee);
         public bool DeleteEmployee(int EmpId);
         public List<EmpRegistration> GetAllEmployee();
+        public string EmployeeLogin(EmpLogin empLogin);
 
     }
 }

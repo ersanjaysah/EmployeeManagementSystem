@@ -70,5 +70,18 @@ namespace BussinessLayer.Service
                 throw ex;
             }
         }
+
+        public string EmployeeLogin(EmpLogin empLogin)
+        {
+            try
+            {
+                return this.employeeRL.EmployeeLogin(empLogin);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
