@@ -174,5 +174,54 @@ namespace ReposatoryLayer.Service
                 this.sqlConnection.Close();
             }
         }
+
+        public List<EmpRegistration> GetAllEmployee()
+        {
+            try
+            {
+                List<EmpRegistration> empRegistration = new List<EmpRegistration>();
+                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+                SqlCommand cmd = new SqlCommand("SPGetAllEmployee", this.sqlConnection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+                this.sqlConnection.Open();
+                SqlDataReader reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        empRegistration.Add(new EmpRegistration
+                        {
+                            EmpId = Convert.ToInt32(reader["EmpId"]),
+                            FullName = reader["FullName"].ToString(),
+                            Email = reader["Email"].ToString(),
+                            Password=reader["Password"].ToString(),
+                            MobileNumber = Convert.ToInt64(reader["MobileNumber"]),
+                            Address = reader["Address"].ToString(),
+                            Gender = reader["Gender"].ToString(),
+                            Position = reader["Position"].ToString(),
+                            Salary= Convert.ToInt64(reader["Salary"]),
+                            
+                        });
+                    }
+                    this.sqlConnection.Close();
+                    return empRegistration;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+            finally
+            {
+                this.sqlConnection.Close();
+            }
+        }
     }
 }

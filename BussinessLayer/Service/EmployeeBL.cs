@@ -57,5 +57,18 @@ namespace BussinessLayer.Service
                 throw ex;
             }
         }
+
+        public List<EmpRegistration> GetAllEmployee()
+        {
+            try
+            {
+               return this.employeeRL.GetAllEmployee();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
     }
 }
