@@ -19,28 +19,20 @@ namespace EmployeeManagementSystem.Controllers
             this.adminBL = adminBL;
         }
 
-        
+
         [HttpPost("AdminLogin")]
         public IActionResult AdminLogin(AdminLogin adminLogin)
         {
-            try
-            {
-                var result = this.adminBL.Adminlogin(adminLogin);
-                if (result != null)
-                {
-                    return this.Ok(new { success = true, message = "Login Successful", data = result });
 
-                }
-                else
-                {
-                    return this.BadRequest(new {success=false, message="Login Failed", data= result});
-                }
+            var result = this.adminBL.Adminlogin(adminLogin);
+            if (result != null)
+            {
+                return this.Ok(new { success = true, message = "Login Successful", data = result });
+
             }
-            catch (Exception )
+            else
             {
-
-                 return this.BadRequest(new { success = false, message = "Login Failed !!! check Email or Password" });
-               
+                return this.BadRequest(new { success = false, message = "Login Failed", data = result });
             }
         }
     }

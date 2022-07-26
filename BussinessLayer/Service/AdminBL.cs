@@ -16,15 +16,7 @@ namespace BussinessLayer.Service
         }
         public AdminLoginModel Adminlogin(AdminLogin adminLogin)
         {
-            try
-            {
-                return this.adminRL.Adminlogin(adminLogin);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            return this.adminRL.Adminlogin(adminLogin);
         }
     }
 }

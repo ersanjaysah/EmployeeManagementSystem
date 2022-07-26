@@ -2,7 +2,9 @@ using BussinessLayer.Interface;
 using BussinessLayer.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +18,7 @@ using ReposatoryLayer.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,6 +42,15 @@ namespace EmployeeManagementSystem
 
             services.AddTransient<IEmployeeRL, EmployeeRL>();
             services.AddTransient<IEmployeeBL, EmployeeBL>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                name: "AllowOrigin",
+              builder => {
+                  builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+              });
+            });
 
             services.AddSwaggerGen(setup =>
             {
@@ -89,6 +101,7 @@ namespace EmployeeManagementSystem
        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -101,11 +114,31 @@ namespace EmployeeManagementSystem
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler(
+              options =>
+              {
+                  options.Run(
+                      async context =>
+                      {
+                          context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                          context.Response.ContentType = "text/html";
+                          var exceptionObject = context.Features.Get<IExceptionHandlerFeature>();
+                          if (null != exceptionObject)
+                          {
+                              var errorMessage = $"<b>Exception Error: {exceptionObject.Error.Message} </b> {exceptionObject.Error.StackTrace}";
+                              await context.Response.WriteAsync(errorMessage).ConfigureAwait(false);
+                          }
+                      });
+              }
+              );
+            }
 
+            app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

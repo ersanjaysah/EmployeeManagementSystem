@@ -23,47 +23,41 @@ namespace ReposatoryLayer.Service
 
         public AdminLoginModel Adminlogin(AdminLogin adminLogin)
         {
-            try
+
+            this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+            SqlCommand cmd = new SqlCommand("SPLoginAdmin", this.sqlConnection)
             {
-                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-                SqlCommand cmd = new SqlCommand("SPLoginAdmin", this.sqlConnection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
+                CommandType = CommandType.StoredProcedure
+            };
 
-                cmd.Parameters.AddWithValue("@Email", adminLogin.Email);
-                cmd.Parameters.AddWithValue("@Password", adminLogin.Password);
+            cmd.Parameters.AddWithValue("@Email", adminLogin.Email);
+            cmd.Parameters.AddWithValue("@Password", adminLogin.Password);
 
-                this.sqlConnection.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                AdminLoginModel admin = new AdminLoginModel();
-                if(reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        admin.AdminId = Convert.ToInt32(reader["AdminId"]);
-                        admin.FullName = Convert.ToString(reader["FullName"]);
-                        admin.Email = Convert.ToString(reader["Email"]);
-                        admin.MobileNumber= Convert.ToString(reader["MobileNumber"]);
-                        admin.Address = Convert.ToString(reader["Address"]);
-
-                    }
-                    this.sqlConnection.Close();
-                    admin.Token = this.GenerateSecurityToken(admin.Email, admin.AdminId);
-                    return admin;
-                }
-                else
-                {
-                    throw new Exception("Email or Password is Wrong");
-                }
-
-            }
-            catch (Exception ex)
+            this.sqlConnection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            AdminLoginModel admin = new AdminLoginModel();
+            if (reader.HasRows)
             {
-                throw ex;
+                while (reader.Read())
+                {
+                    admin.AdminId = Convert.ToInt32(reader["AdminId"]);
+                    admin.FullName = Convert.ToString(reader["FullName"]);
+                    admin.Email = Convert.ToString(reader["Email"]);
+                    admin.MobileNumber = Convert.ToString(reader["MobileNumber"]);
+                    admin.Address = Convert.ToString(reader["Address"]);
+
+                }
+                this.sqlConnection.Close();
+                admin.Token = this.GenerateSecurityToken(admin.Email, admin.AdminId);
+                return admin;
             }
+            else
+            {
+                throw new Exception("Email or Password is Wrong");
+            }
+
         }
-       
+
 
         public string GenerateSecurityToken(string emailID, int AdminId)
         {
