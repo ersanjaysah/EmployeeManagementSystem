@@ -18,7 +18,7 @@ namespace EmployeeManagementSystem.Controllers
         }  
 
 
-         [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Role.Admin)]
         [HttpPost("Registration")]//HttpPost used to send the data to the server from HttpClient
         public IActionResult Registration(EmpRegistration empRegistration)
         {
@@ -41,7 +41,7 @@ namespace EmployeeManagementSystem.Controllers
             }
         }
 
-       // [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Role.Admin)]
         [HttpPut("UpdateEmployee/{EmpId}")]
         public IActionResult UpdateEmployee(int EmpId, EmpRegistration updateEmployee)
         {
@@ -60,7 +60,7 @@ namespace EmployeeManagementSystem.Controllers
             }
         }
 
-        // [Authorize(Roles = Role.Admin)]
+         [Authorize(Roles = Role.Admin)]
         [HttpDelete("DeleteEmployee/{EmpId}")]
         public IActionResult DeleteEmployee(int EmpId)
         {
@@ -84,7 +84,7 @@ namespace EmployeeManagementSystem.Controllers
             }
         }
 
-      //  [Authorize(Roles =Role.Admin)]
+        [Authorize(Roles =Role.Admin)]
         [HttpGet("GetAllEmployee")]
         public IActionResult GetAllEmployee()
         {
@@ -132,13 +132,13 @@ namespace EmployeeManagementSystem.Controllers
         }
 
 
-        [Authorize(Roles = Role.User)]
+        [Authorize(Roles = Role.Employee)]
         [HttpGet("EmployeeDetails")]
         public IActionResult EmployeeDetails()
         {
             try
             {
-                int EmpId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "EmpId").Value);
+                int EmpId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
                 var result = this.employeeBL.EmployeeDetails(EmpId);
                 if (result != null)
                 {

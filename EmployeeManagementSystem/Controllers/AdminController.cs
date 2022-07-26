@@ -19,7 +19,7 @@ namespace EmployeeManagementSystem.Controllers
             this.adminBL = adminBL;
         }
 
-        [AllowAnonymous]
+        
         [HttpPost("AdminLogin")]
         public IActionResult AdminLogin(AdminLogin adminLogin)
         {
