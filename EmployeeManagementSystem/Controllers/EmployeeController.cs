@@ -15,29 +15,21 @@ namespace EmployeeManagementSystem.Controllers
         public EmployeeController(IEmployeeBL employeeBL)
         {
             this.employeeBL = employeeBL;
-        }  
-
+        }
 
         [Authorize(Roles = Role.Admin)]
         [HttpPost("Registration")]//HttpPost used to send the data to the server from HttpClient
         public IActionResult Registration(EmpRegistration empRegistration)
         {
-            try
+            
+            EmpRegistration EmpData = this.employeeBL.Registration(empRegistration);
+            if (EmpData != null)
             {
-                EmpRegistration EmpData =this.employeeBL.Registration(empRegistration);
-                if (EmpData != null)
-                {
-                    return this.Ok(new {Success = true, message ="User Added Successfully", Response = EmpData});
-                }
-                else
-                {
-                    return this.Ok(new { Success = true, message = "Sorry!!! User Already Exist" });
-                }
+                return this.Ok(new { Success = true, message = "User Added Successfully", Response = EmpData });
             }
-            catch (Exception ex)
+            else
             {
-                return this.BadRequest(new { Success = false, message = ex.Message });
-
+                return this.Ok(new { Success = true, message = "Sorry!!! User Already Exist" });
             }
         }
 
@@ -45,114 +37,75 @@ namespace EmployeeManagementSystem.Controllers
         [HttpPut("UpdateEmployee/{EmpId}")]
         public IActionResult UpdateEmployee(int EmpId, EmpRegistration updateEmployee)
         {
-            try
+            var Data = this.employeeBL.UpdateEmployee(EmpId, updateEmployee);
+            if (Data == true)
             {
-                var Data = this.employeeBL.UpdateEmployee(EmpId, updateEmployee);
-                if (Data == true)
-                {
-                    return this.Ok(new { Success = true, message = "Employee Updated successfully", Response = Data });
-                }
-                else { return this.BadRequest(new { Success = false, message = "Enter Valid Employee Id" }); }
+                return this.Ok(new { Success = true, message = "Employee Updated successfully", Response = Data });
             }
-            catch (Exception ex)
+            else
             {
-                return this.BadRequest(new { Success = false, message = ex.Message });
+                return this.BadRequest(new { Success = false, message = "Enter Valid Employee Id" });
             }
         }
 
-         [Authorize(Roles = Role.Admin)]
+        [Authorize(Roles = Role.Admin)]
         [HttpDelete("DeleteEmployee/{EmpId}")]
         public IActionResult DeleteEmployee(int EmpId)
         {
-            try
+            var Data = this.employeeBL.DeleteEmployee(EmpId);
+            if (Data == true)
             {
-                var Data = this.employeeBL.DeleteEmployee(EmpId);
-                if (Data == true)
-                {
-                    return this.Ok(new { Success = true, message = "Employee Deleted Successfully", Response = Data });
-
-                }
-                else
-                {
-                    return this.BadRequest(new { Success = false, message = "Enter valid EmployeeId" });
-                }
+                return this.Ok(new { Success = true, message = "Employee Deleted Successfully", Response = Data });
             }
-            catch (Exception ex)
+            else
             {
-
-                throw ex;
+                return this.BadRequest(new { Success = false, message = "Enter valid EmployeeId" });
             }
         }
 
-        [Authorize(Roles =Role.Admin)]
+        [Authorize(Roles = Role.Admin)]
         [HttpGet("GetAllEmployee")]
         public IActionResult GetAllEmployee()
         {
-            try
+            
+            var result = this.employeeBL.GetAllEmployee();
+            if (result != null)
             {
-                var result=this.employeeBL.GetAllEmployee();
-                if (result != null)
-                {
-                    return this.Ok(new { Success = true, message = "Employee Details Fatched Successfully", Response = result });
-                }
-                else
-                {
-                    return this.BadRequest(new { Success = false, message = "Oops!! Details Not Fatched" });
-                }
+                return this.Ok(new { Success = true, message = "Employee Details Fatched Successfully", Response = result });
             }
-            catch (Exception ex)
+            else
             {
-
-                return this.BadRequest(new {Success=false, message = ex.Message});
+                return this.BadRequest(new { Success = false, message = "Oops!! Details Not Fatched" });
             }
         }
 
-       
-
-        [HttpPost("EmployeeLogin")] 
+        [HttpPost("EmployeeLogin")]
         public IActionResult EmployeeLogin(EmpLogin empLogin)
         {
-            try
+            var result = this.employeeBL.EmployeeLogin(empLogin);
+            if (result != null)
             {
-                var result = this.employeeBL.EmployeeLogin(empLogin);
-                if (result!=null)
-                {
-                    return this.Ok(new { success = true, message = "Login Successful", Token = result });
-                }
-                else
-                {
-                    return this.BadRequest(new { success = false, message = "Sorry!!! Login Failed", Token = result });
-                }
-
+                return this.Ok(new { success = true, message = "Login Successful", Token = result });
             }
-            catch (Exception ex)
+            else
             {
-                throw ex;
+                return this.BadRequest(new { success = false, message = "Sorry!!! Login Failed", Token = result });
             }
         }
-
 
         [Authorize(Roles = Role.Employee)]
         [HttpGet("EmployeeDetails")]
         public IActionResult EmployeeDetails()
         {
-            try
+            int EmpId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "EmpId").Value);
+            var result = this.employeeBL.EmployeeDetails(EmpId);
+            if (result != null)
             {
-                int EmpId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "UserId").Value);
-                var result = this.employeeBL.EmployeeDetails(EmpId);
-                if (result != null)
-                {
-                    return this.Ok(new { Success = true, message = "Here is the Details", Response = result });
-                }
-                else
-                {
-                    return this.BadRequest(new { Success = false, message = "please Enter valid credentials" });
-                }
+                return this.Ok(new { Success = true, message = "Here is the Details", Response = result });
             }
-            catch (Exception ex)
+            else
             {
-
-                return this.BadRequest(new { success = false, message = ex.Message });
+                return this.BadRequest(new { Success = false, message = "please Enter valid credentials" });
             }
         }
     }

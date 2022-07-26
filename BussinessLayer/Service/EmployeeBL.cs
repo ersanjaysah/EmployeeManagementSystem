@@ -15,86 +15,34 @@ namespace BussinessLayer.Service
         {
             this.employeeRL = employeeRL;
         }
-
-       
-
         public EmpRegistration Registration(EmpRegistration empRegistration)
         {
-            try
-            {
-                return this.employeeRL.Registration(empRegistration);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
-         
+            return this.employeeRL.Registration(empRegistration);
         }
 
         public bool UpdateEmployee(int EmpId, EmpRegistration updateEmployee)
         {
-            try
-            {
-                return this.employeeRL.UpdateEmployee(EmpId, updateEmployee);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            return this.employeeRL.UpdateEmployee(EmpId, updateEmployee);
         }
 
         public bool DeleteEmployee(int EmpId)
         {
-            try
-            {
-                return this.employeeRL.DeleteEmployee(EmpId);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            return this.employeeRL.DeleteEmployee(EmpId);
         }
 
         public List<EmpRegistration> GetAllEmployee()
         {
-            try
-            {
-               return this.employeeRL.GetAllEmployee();
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            return this.employeeRL.GetAllEmployee();
         }
 
         public string EmployeeLogin(EmpLogin empLogin)
         {
-            try
-            {
-                return this.employeeRL.EmployeeLogin(empLogin);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            return this.employeeRL.EmployeeLogin(empLogin);
         }
 
         public EmpRegistration EmployeeDetails(int EmpId)
         {
-            try
-            {
-                return this.employeeRL.EmployeeDetails(EmpId);
-            }
-            catch (Exception ex)
-            {
-
-                throw ex;
-            }
+            return this.employeeRL.EmployeeDetails(EmpId);
         }
     }
 }

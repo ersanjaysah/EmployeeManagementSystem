@@ -15,7 +15,7 @@ namespace ReposatoryLayer.Service
     public class EmployeeRL : IEmployeeRL
     {
         private SqlConnection sqlConnection;
-      
+
         private IConfiguration Configuration { get; }
         public EmployeeRL(IConfiguration configuration)
         {
@@ -30,47 +30,35 @@ namespace ReposatoryLayer.Service
         public EmpRegistration Registration(EmpRegistration empRegistration)
         {
             sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-            try
-            {
-                using(sqlConnection)
-                {
-                    SqlCommand cmd = new SqlCommand("SPEmpRegistration", this.sqlConnection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    //command type is a class to set the store procedure
-                    cmd.Parameters.AddWithValue("@FullName", empRegistration.FullName);
-                    cmd.Parameters.AddWithValue("@Email", empRegistration.Email);
-                    cmd.Parameters.AddWithValue("@Password", empRegistration.Password);
-                    cmd.Parameters.AddWithValue("@MobileNumber", empRegistration.MobileNumber);
-                    cmd.Parameters.AddWithValue("@Address", empRegistration.Address);
-                    cmd.Parameters.AddWithValue("@Gender", empRegistration.Gender);
-                    cmd.Parameters.AddWithValue("@Position", empRegistration.Position);
-                    cmd.Parameters.AddWithValue("@Salary", empRegistration.Salary);
 
-                    sqlConnection.Open();
-                    int result=cmd.ExecuteNonQuery();
-                    sqlConnection.Close();
-                    if (result!=0)
-                    {
-                        return empRegistration;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
-            }
-            catch (Exception ex)
+            using (sqlConnection)
             {
+                SqlCommand cmd = new SqlCommand("SPEmpRegistration", this.sqlConnection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                //command type is a class to set the store procedure
+                cmd.Parameters.AddWithValue("@FullName", empRegistration.FullName);
+                cmd.Parameters.AddWithValue("@Email", empRegistration.Email);
+                cmd.Parameters.AddWithValue("@Password", empRegistration.Password);
+                cmd.Parameters.AddWithValue("@MobileNumber", empRegistration.MobileNumber);
+                cmd.Parameters.AddWithValue("@Address", empRegistration.Address);
+                cmd.Parameters.AddWithValue("@Gender", empRegistration.Gender);
+                cmd.Parameters.AddWithValue("@Position", empRegistration.Position);
+                cmd.Parameters.AddWithValue("@Salary", empRegistration.Salary);
 
-                throw ex;
-            }
-            finally
-            {
+                sqlConnection.Open();
+                int result = cmd.ExecuteNonQuery();
                 sqlConnection.Close();
+                if (result != 0)
+                {
+                    return empRegistration;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
-       
         /// <summary>
         /// this method is used for generate the Token
         /// </summary>
@@ -108,173 +96,143 @@ namespace ReposatoryLayer.Service
         /// <returns></returns>
         public bool UpdateEmployee(int EmpId, EmpRegistration updateEmployee)
         {
-            try
-            {
-                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-                SqlCommand cmd = new SqlCommand("SPUpdateEmployee", this.sqlConnection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                //adding parameter to store procedure
-                cmd.Parameters.AddWithValue("@EmpId", EmpId);
-                cmd.Parameters.AddWithValue("@FullName", updateEmployee.FullName);
-                cmd.Parameters.AddWithValue("@Email", updateEmployee.Email);
-                cmd.Parameters.AddWithValue("@Password", updateEmployee.Password);
-                cmd.Parameters.AddWithValue("@MobileNumber", updateEmployee.MobileNumber);
-                cmd.Parameters.AddWithValue("@Address", updateEmployee.Address);
-                cmd.Parameters.AddWithValue("@Gender", updateEmployee.Gender);
-                cmd.Parameters.AddWithValue("@Position", updateEmployee.Position);
-                cmd.Parameters.AddWithValue("@Salary", updateEmployee.Salary);
-                
-                sqlConnection.Open();
-                cmd.ExecuteScalar();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                this.sqlConnection.Close();
-            }
 
+            this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+            SqlCommand cmd = new SqlCommand("SPUpdateEmployee", this.sqlConnection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+            //adding parameter to store procedure
+            cmd.Parameters.AddWithValue("@EmpId", EmpId);
+            cmd.Parameters.AddWithValue("@FullName", updateEmployee.FullName);
+            cmd.Parameters.AddWithValue("@Email", updateEmployee.Email);
+            cmd.Parameters.AddWithValue("@Password", updateEmployee.Password);
+            cmd.Parameters.AddWithValue("@MobileNumber", updateEmployee.MobileNumber);
+            cmd.Parameters.AddWithValue("@Address", updateEmployee.Address);
+            cmd.Parameters.AddWithValue("@Gender", updateEmployee.Gender);
+            cmd.Parameters.AddWithValue("@Position", updateEmployee.Position);
+            cmd.Parameters.AddWithValue("@Salary", updateEmployee.Salary);
+            this.sqlConnection.Open();
+            cmd.ExecuteScalar();
+            this.sqlConnection.Close();
+            return true;
         }
 
+        /// <summary>
+        /// Delete Employee
+        /// </summary>
+        /// <param name="EmpId"></param>
+        /// <returns></returns>
         public bool DeleteEmployee(int EmpId)
         {
-            try
+            this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+            SqlCommand cmd = new SqlCommand("SPDeleteEmployee", this.sqlConnection)
             {
-                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-                SqlCommand cmd = new SqlCommand("SPDeleteEmployee", this.sqlConnection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                //adding parameter to store procedure
-                cmd.Parameters.AddWithValue("@EmpId", EmpId);
-                this.sqlConnection.Open();
-                var result = cmd.ExecuteNonQuery();
-                this.sqlConnection.Close();
-                if (result != 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                CommandType = CommandType.StoredProcedure
+            };
+            //adding parameter to store procedure
+            cmd.Parameters.AddWithValue("@EmpId", EmpId);
+            this.sqlConnection.Open();
+            var result = cmd.ExecuteNonQuery();
+            this.sqlConnection.Close();
+            if (result != 0)
+            {
+                return true;
             }
-            catch (Exception ex)
+            else
             {
-
-                throw ex;
-            }
-            finally
-            {
-                this.sqlConnection.Close();
+                return false;
             }
         }
 
+        /// <summary>
+        /// Get all employee details by Admin
+        /// </summary>
+        /// <returns></returns>
         public List<EmpRegistration> GetAllEmployee()
         {
-            try
+            List<EmpRegistration> empRegistration = new List<EmpRegistration>();
+            this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+            SqlCommand cmd = new SqlCommand("SPGetAllEmployee", this.sqlConnection)
             {
-                List<EmpRegistration> empRegistration = new List<EmpRegistration>();
-                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-                SqlCommand cmd = new SqlCommand("SPGetAllEmployee", this.sqlConnection)
+                CommandType = CommandType.StoredProcedure
+            };
+            this.sqlConnection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
                 {
-                    CommandType = CommandType.StoredProcedure
-                };
-                this.sqlConnection.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
+                    empRegistration.Add(new EmpRegistration
                     {
-                        empRegistration.Add(new EmpRegistration
-                        {
-                            EmpId = Convert.ToInt32(reader["EmpId"]),
-                            FullName = reader["FullName"].ToString(),
-                            Email = reader["Email"].ToString(),
-                            Password=reader["Password"].ToString(),
-                            MobileNumber = Convert.ToInt64(reader["MobileNumber"]),
-                            Address = reader["Address"].ToString(),
-                            Gender = reader["Gender"].ToString(),
-                            Position = reader["Position"].ToString(),
-                            Salary= Convert.ToInt64(reader["Salary"]),
-                            
-                        });
-                    }
-                    this.sqlConnection.Close();
-                    return empRegistration;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception ex)
-            {
+                        EmpId = Convert.ToInt32(reader["EmpId"]),
+                        FullName = reader["FullName"].ToString(),
+                        Email = reader["Email"].ToString(),
+                        Password = reader["Password"].ToString(),
+                        MobileNumber = Convert.ToInt64(reader["MobileNumber"]),
+                        Address = reader["Address"].ToString(),
+                        Gender = reader["Gender"].ToString(),
+                        Position = reader["Position"].ToString(),
+                        Salary = Convert.ToInt64(reader["Salary"]),
 
-                throw ex;
-            }
-            finally
-            {
+                    });
+                }
                 this.sqlConnection.Close();
+                return empRegistration;
+            }
+            else
+            {
+                return null;
             }
         }
 
+        /// <summary>
+        /// Login Employee
+        /// </summary>
+        /// <param name="empLogin"></param>
+        /// <returns></returns>
         public string EmployeeLogin(EmpLogin empLogin)
         {
-            try
+            this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+            SqlCommand cmd = new SqlCommand("SPLoginEmployee", this.sqlConnection)
             {
-                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-                SqlCommand cmd = new SqlCommand("SPLoginEmployee", this.sqlConnection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                cmd.Parameters.AddWithValue("@Email", empLogin.Email);
-                cmd.Parameters.AddWithValue("@Password", empLogin.Password);
-                // opening the connection
-                this.sqlConnection.Open();
+                CommandType = CommandType.StoredProcedure
+            };
+            cmd.Parameters.AddWithValue("@Email", empLogin.Email);
+            cmd.Parameters.AddWithValue("@Password", empLogin.Password);
+            this.sqlConnection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            EmpLogin emp = new EmpLogin();
 
-                SqlDataReader reader = cmd.ExecuteReader();
-                    EmpLogin emp = new EmpLogin();
-               
-                if (reader.HasRows)
-                {
-                    int EmpId = 0;
-
-                    while (reader.Read())
-                    {
-                        emp.Email = Convert.ToString(reader["Email"]);
-                        emp.Password = Convert.ToString(reader["Password"]);
-                        EmpId = Convert.ToInt32(reader["EmpId"]);
-                    }
-                    // closing the connection
-                    this.sqlConnection.Close();
-                    var Token = this.GenerateSecurityToken(emp.Email, EmpId);
-                    return Token;
-                }
-                else
-                {
-                    this.sqlConnection.Close();
-                    return null;
-                }
-  
-            }
-            catch (Exception ex)
+            if (reader.HasRows)
             {
+                int EmpId = 0;
 
-                throw ex;
+                while (reader.Read())
+                {
+                    emp.Email = Convert.ToString(reader["Email"]);
+                    emp.Password = Convert.ToString(reader["Password"]);
+                    EmpId = Convert.ToInt32(reader["EmpId"]);
+                }
+                // closing the connection
+                this.sqlConnection.Close();
+                var Token = this.GenerateSecurityToken(emp.Email, EmpId);
+                return Token;
             }
-            finally
+            else
             {
                 this.sqlConnection.Close();
+                return null;
             }
         }
 
-        public string GenerateSecurityToken(string emailID, int userId)
+        /// <summary>
+        /// Generate Token of Employee
+        /// </summary>
+        /// <param name="emailID"></param>
+        /// <param name="empId"></param>
+        /// <returns></returns>
+        public string GenerateSecurityToken(string emailID, int empId)
         {
             var SecurityKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes("THIS_IS_MY_KEY_TO_GENERATE_TOKEN"));
             var credentials = new SigningCredentials(SecurityKey, SecurityAlgorithms.HmacSha256);
@@ -283,7 +241,7 @@ namespace ReposatoryLayer.Service
             {
                 new Claim(ClaimTypes.Role,"Employee"),
                 new Claim(ClaimTypes.Email, emailID),
-                new Claim("UserId", userId.ToString())
+                new Claim("EmpId", empId.ToString())
             };
             var token = new JwtSecurityToken(
                 this.Configuration["Jwt:Issuer"],
@@ -295,42 +253,35 @@ namespace ReposatoryLayer.Service
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-
+        /// <summary>
+        /// Employee View his details
+        /// </summary>
+        /// <param name="EmpId"></param>
+        /// <returns></returns>
         public EmpRegistration EmployeeDetails(int EmpId)
         {
-            try
+            this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
+            SqlCommand cmd = new SqlCommand("SPGetEmployeeByEmpId", this.sqlConnection)
             {
-                this.sqlConnection = new SqlConnection(this.Configuration["ConnectionStrings:EmployeeManagementSystem"]);
-                SqlCommand cmd = new SqlCommand("SPGetEmployeeByEmpId", this.sqlConnection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
+                CommandType = CommandType.StoredProcedure
+            };
 
-                cmd.Parameters.AddWithValue("@EmpId", EmpId);
-                this.sqlConnection.Open();
-                EmpRegistration empRegistration = new EmpRegistration();
-                SqlDataReader reader = cmd.ExecuteReader();
-                reader.Read();
-                empRegistration.EmpId = Convert.ToInt32(reader["EmpId"]);
-                empRegistration.FullName = reader["FullName"].ToString();
-                empRegistration.Email = reader["Email"].ToString();
-                empRegistration.Password = reader["Password"].ToString();
-                empRegistration.MobileNumber = Convert.ToInt64(reader["MobileNumber"]);
-                empRegistration.Address = reader["Address"].ToString();
-                empRegistration.Gender = reader["Gender"].ToString();
-                empRegistration.Position = reader["Position"].ToString();
-                empRegistration.Salary = Convert.ToInt64(reader["Salary"]);
+            cmd.Parameters.AddWithValue("@EmpId", EmpId);
+            this.sqlConnection.Open();
+            EmpRegistration empRegistration = new EmpRegistration();
+            SqlDataReader reader = cmd.ExecuteReader();
+            reader.Read();
+            empRegistration.EmpId = Convert.ToInt32(reader["EmpId"]);
+            empRegistration.FullName = reader["FullName"].ToString();
+            empRegistration.Email = reader["Email"].ToString();
+            empRegistration.Password = reader["Password"].ToString();
+            empRegistration.MobileNumber = Convert.ToInt64(reader["MobileNumber"]);
+            empRegistration.Address = reader["Address"].ToString();
+            empRegistration.Gender = reader["Gender"].ToString();
+            empRegistration.Position = reader["Position"].ToString();
+            empRegistration.Salary = Convert.ToInt64(reader["Salary"]);
 
-                return empRegistration;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                this.sqlConnection.Close();
-            }
+            return empRegistration;
         }
     }
 }
